@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>75 Soft Daily Tracker</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="topbar">
+        <div>
+          <h1>75 Soft Tracker</h1>
+          <p class="subtitle">Daily habit + journal companion</p>
+        </div>
+        <div class="stats">
+          <div class="stat">
+            <span class="stat-label">Current Streak</span>
+            <strong id="streakCount">0 days</strong>
+          </div>
+          <div class="stat">
+            <span class="stat-label">This Week</span>
+            <strong id="weeklyCount">0/7</strong>
+          </div>
+        </div>
+      </header>
+
+      <section class="card" id="todayCard">
+        <div class="card-header">
+          <h2 id="entryDateLabel">Today</h2>
+          <div class="entry-controls">
+            <label class="date-jump">
+              <span>Date</span>
+              <input id="datePicker" type="date" />
+            </label>
+            <button id="goTodayBtn" type="button">Today</button>
+            <span class="pill">Daily Entry</span>
+          </div>
+        </div>
+
+        <div id="taskList" class="task-list"></div>
+
+        <div class="field-group">
+          <label for="mood">Mood (1-5)</label>
+          <input id="mood" type="range" min="1" max="5" step="1" />
+          <div class="mood-readout">Mood: <span id="moodValue">3</span>/5</div>
+        </div>
+
+        <div class="field-group">
+          <label for="notes">Notes (optional)</label>
+          <textarea
+            id="notes"
+            rows="4"
+            placeholder="How did today go?"
+          ></textarea>
+        </div>
+
+        <div class="progress-block">
+          <div class="progress-header">
+            <span>Completion</span>
+            <strong id="progressPercent">0%</strong>
+          </div>
+          <div class="progress-track">
+            <div id="progressBar" class="progress-bar"></div>
+          </div>
+        </div>
+
+        <div class="entry-actions">
+          <button id="saveBtn" type="button">Save</button>
+          <button id="exportBackupBtn" type="button">Export Backup</button>
+          <button id="importBackupBtn" type="button">Import Backup</button>
+          <button id="deleteDayBtn" class="danger" type="button">Delete Day</button>
+          <button id="resetDataBtn" class="danger subtle" type="button">
+            Reset Data
+          </button>
+          <span id="saveState" class="save-state">Not saved yet</span>
+          <input id="importBackupInput" type="file" accept=".json" hidden />
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <h2>Past Days</h2>
+          <span class="pill muted">Editable</span>
+        </div>
+        <div id="historyList" class="history-list"></div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
