@@ -1,4 +1,5 @@
 const STORAGE_KEY = "soft75_tracker_entries_v1";
+const REMOTE_UPDATE_CHECK_MS = 60000;
 
 const TASKS = [
   { id: "workout", label: "Workout (45 min)" },
@@ -34,8 +35,11 @@ const dom = {
 };
 
 let activeDate = getTodayKey();
+let knownAppTag = "";
 
 render();
+setupCrossTabSync();
+setupRemoteUpdateCheck();
 
 function loadEntries() {
   try {
@@ -378,6 +382,56 @@ function resetAllData() {
   ensureEntryForDate(activeDate);
   setSaveState("Data reset");
   render();
+}
+
+function setupCrossTabSync() {
+  window.addEventListener("storage", (event) => {
+    if (event.key !== STORAGE_KEY) {
+      return;
+    }
+    entries = loadEntries();
+    ensureEntryForDate(activeDate);
+    render();
+    setSaveState("Synced from another tab");
+  });
+}
+
+async function readAppTag() {
+  try {
+    const response = await fetch("app.js", {
+      method: "HEAD",
+      cache: "no-store"
+    });
+    if (!response.ok) {
+      return "";
+    }
+    return (
+      response.headers.get("etag") ||
+      response.headers.get("last-modified") ||
+      ""
+    );
+  } catch {
+    return "";
+  }
+}
+
+function setupRemoteUpdateCheck() {
+  const checkForUpdate = async () => {
+    const tag = await readAppTag();
+    if (!tag) {
+      return;
+    }
+    if (!knownAppTag) {
+      knownAppTag = tag;
+      return;
+    }
+    if (tag !== knownAppTag) {
+      window.location.reload();
+    }
+  };
+
+  checkForUpdate();
+  window.setInterval(checkForUpdate, REMOTE_UPDATE_CHECK_MS);
 }
 
 dom.mood.addEventListener("input", () => {
