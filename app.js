@@ -2,12 +2,14 @@ const STORAGE_KEY = "soft75_tracker_entries_v1";
 const REMOTE_UPDATE_CHECK_MS = 60000;
 
 const TASKS = [
-  { id: "workout", label: "Workout (45 min)" },
+  { id: "workout", label: "Workout/Walking (45 min)" },
   { id: "water", label: "Water (3L)" },
   { id: "healthy", label: "Healthy eating (2000 calories)" },
-  { id: "schoolReading", label: "Reading for School (90 minutes)" },
-  { id: "reading", label: "Reading (10 pages)" }
+  { id: "schoolReading", label: "Reading for School (30-90 minutes)" },
+  { id: "reading", label: "Reading (10 pages) / Podcasts (30 minutes)" },
+  { id: "walking", label: "Walking (3km or 10,000 steps)" }
 ];
+const MIN_COMPLETED_TASKS = 4;
 
 let entries = loadEntries();
 ensureTodayEntry();
@@ -161,11 +163,12 @@ function ensureEntryForDate(dateKey) {
 
 function completionOf(entry) {
   const done = TASKS.filter((task) => entry.checks[task.id]).length;
-  return Math.round((done / TASKS.length) * 100);
+  return Math.min(100, Math.round((done / MIN_COMPLETED_TASKS) * 100));
 }
 
 function isDayCompleted(entry) {
-  return TASKS.every((task) => entry.checks[task.id]);
+  const done = TASKS.filter((task) => entry.checks[task.id]).length;
+  return done >= MIN_COMPLETED_TASKS;
 }
 
 function dateDisplay(dateKey) {
@@ -250,7 +253,7 @@ function renderHistory() {
     const status = document.createElement("span");
     status.className = "history-meta";
     status.textContent = isDayCompleted(entry)
-      ? "Completed challenge day"
+      ? `Completed challenge day (${MIN_COMPLETED_TASKS}/${TASKS.length}+ tasks)`
       : "In progress";
 
     const editBtn = document.createElement("button");
